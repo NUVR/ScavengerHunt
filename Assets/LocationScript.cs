@@ -12,15 +12,21 @@ public class LocationScript : MonoBehaviour
         Debug.Log("Looking for location");
         PrintLocation.text = "Looking for location";
         if (!Input.location.isEnabledByUser)
+        {
+            PrintLocation.text = "Location is not enabled by user";
             yield break;
+        }
+            
 
         // Start service before querying location
         Input.location.Start();
+        PrintLocation.text = "Starting location query...";
 
         // Wait until service initializes
         int maxWait = 20;
         while (Input.location.status == LocationServiceStatus.Initializing && maxWait > 0)
         {
+            PrintLocation.text = "Initializing . . .";
             yield return new WaitForSeconds(1);
             maxWait--;
         }
