@@ -31,7 +31,7 @@ public class CustomBehaviour : MonoBehaviour
         if (entry.getAdditionalData() != null && entry.getAdditionalData().TryGetValue("name", out value))
         {
             // Set name
-            this.gameObject.name = value;
+           this.gameObject.name = value;
         }
     }
 

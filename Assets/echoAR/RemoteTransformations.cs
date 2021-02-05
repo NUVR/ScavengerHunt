@@ -48,12 +48,10 @@ public class RemoteTransformations : MonoBehaviour
     public void Update()
     {
         string value = "";
-        float positionFactor = 1f;
 
         // Attach to parent
         if (this.gameObject.transform.parent) {
             initialWorldSpacePosition =  this.gameObject.transform.parent.transform.position;
-            positionFactor = this.gameObject.transform.parent.transform.localScale.magnitude;
         }
 
         // Handle translation
@@ -70,7 +68,7 @@ public class RemoteTransformations : MonoBehaviour
         {
             positionOffest.z = float.Parse(value, CultureInfo.InvariantCulture);
         }
-        this.gameObject.transform.position = initialWorldSpacePosition + positionOffest * positionFactor;
+        this.gameObject.transform.localPosition = initialWorldSpacePosition + positionOffest;
 
         // Handle spinning
         float speed = 150;

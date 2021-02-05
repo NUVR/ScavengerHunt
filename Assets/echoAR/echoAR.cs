@@ -33,7 +33,7 @@ public class echoAR : MonoBehaviour
         #if UNITY_EDITOR
             Debug.unityLogger.logEnabled = true;
         #else
-            Debug.unityLogger.logEnabled = false;
+            Debug.logger.logEnabled = false;
         #endif
         
         // The echoAR server details
@@ -327,7 +327,7 @@ public class echoAR : MonoBehaviour
                 // Instantiate model based on type
                 if (modelHologram.getFilename().EndsWith(".glb")){
                     // Instantiate model without downloading it
-                    StartCoroutine(InstantiateModel(entry, filenames, importOptions));
+                  StartCoroutine(InstantiateModel(entry, filenames, importOptions));
                 } else {
                     // Download model files and then instantiate
                     StartCoroutine(DownloadFiles(entry, serverURL, filenames, fileStorageIDs, importOptions));
@@ -375,7 +375,7 @@ public class echoAR : MonoBehaviour
                         videoPlayer.SetDirectAudioMute(i, true);
                 }
             // Handle image hologram
-            } else if (hologramType.Equals(Hologram.hologramType.IMAGE_HOLOGRAM)) {
+            }/* else if (hologramType.Equals(Hologram.hologramType.IMAGE_HOLOGRAM)) {
 
                 // Get image
                 ImageHologram imageHologram = (ImageHologram) entry.getHologram();
@@ -405,7 +405,7 @@ public class echoAR : MonoBehaviour
 
                 // Download image file and then instantiate
                 StartCoroutine(DownloadandInitiateImage(entry, imageURL, imagePlane));
-            }
+            }*/
         }
     }
 
@@ -502,11 +502,11 @@ public class echoAR : MonoBehaviour
         }
 
         // Instantiate model
-        StartCoroutine(InstantiateModel(entry, filenames, importOptions));
+       // StartCoroutine(InstantiateModel(entry, filenames, importOptions));
         yield return null;
     }
 
-    IEnumerator InstantiateModel(Entry entry, List<string> filenames, ImportOptions importOptions)
+   IEnumerator InstantiateModel(Entry entry, List<string> filenames, ImportOptions importOptions)
     {
         Debug.Log("Instantiating model " + filenames[0]);
 
@@ -702,7 +702,7 @@ public class echoAR : MonoBehaviour
         // Create form
         WWWForm form = new WWWForm();
         // Set form data
-        form.AddField("key",  APIKey);      // API Key
+      //  form.AddField("key",  APIKey);      // API Key
         form.AddField("target_type", 2);    // Target type is SURFACE
         form.AddField("hologram_type", 2);  // Hologram type is MODEL
         // Set form files
