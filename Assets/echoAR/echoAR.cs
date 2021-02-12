@@ -24,7 +24,7 @@ public class echoAR : MonoBehaviour
     public static double YPosition;
     public static double Latitude;
     public static double Longitude;
-    public Text PrintLocation;
+    public static Text echolocation;
     // Your echoAR API key
     public string APIKey = "<YOUR_API_KEY>";
     private string serverURL;
@@ -314,23 +314,23 @@ public class echoAR : MonoBehaviour
         Debug.Log("Latitude: " + Longitude);
         // First, check if user has location service enabled
         Debug.Log("Looking for location");
-        //PrintLocation.text = "Looking for location";
+        //echolocation.text = "Looking for location";
         if (!Input.location.isEnabledByUser)
         {
-            //PrintLocation.text = "Location is not enabled by user";
+            //echolocation.text = "Location is not enabled by user";
             yield break;
         }
 
 
         // Start service before querying location
         Input.location.Start();
-        //PrintLocation.text = "Starting location query...";
+        //echolocation.text = "Starting location query...";
 
         // Wait until service initializes
         int maxWait = 20;
         while (Input.location.status == LocationServiceStatus.Initializing && maxWait > 0)
         {
-            //PrintLocation.text = "Initializing . . .";
+            //echolocation.text = "Initializing . . .";
             yield return new WaitForSeconds(1);
             maxWait--;
         }
@@ -339,7 +339,7 @@ public class echoAR : MonoBehaviour
         if (maxWait < 1)
         {
             print("Timed out");
-            //PrintLocation.text = "Timed out";
+            //echolocation.text = "Timed out";
             yield break;
         }
 
@@ -347,17 +347,19 @@ public class echoAR : MonoBehaviour
         if (Input.location.status == LocationServiceStatus.Failed)
         {
             print("Unable to determine device location");
-            //PrintLocation.text = "Unable to determine device location";
+            //echolocation.text = "Unable to determine device location";
             yield break;
         }
         else
         {
             // Access granted and location value could be retrieved
             print("Location: " + Input.location.lastData.latitude + " " + Input.location.lastData.longitude);
-            //PrintLocation.text = "Location: " + Input.location.lastData.latitude + " " + Input.location.lastData.longitude + " " + Input.location.lastData.altitude + " " + Input.location.lastData.horizontalAccuracy + " " + Input.location.lastData.timestamp;
+            echolocation.text = "Location: " + Input.location.lastData.latitude + " " + Input.location.lastData.longitude + " " + Input.location.lastData.altitude + " " + Input.location.lastData.horizontalAccuracy + " " + Input.location.lastData.timestamp;
             XPosition = Input.location.lastData.latitude;
             
             YPosition = Input.location.lastData.longitude;
+
+            echolocation.text = Input.location.lastData.latitude + " " + Input.location.lastData.longitude;
         }
 
 
@@ -396,12 +398,12 @@ public class echoAR : MonoBehaviour
                 if (modelHologram.getFilename().EndsWith(".glb")){
                     // Instantiate model without downloading it
                     // LocationScript.FindLocation();
-                    PrintLocation.text = Input.location.lastData.latitude + " " + Input.location.lastData.longitude;
                     //if ((42.3388 < Input.location.lastData.latitude && Input.location.lastData.latitude < 42.3590) &&
                     //  (-71.0870 > Input.location.lastData.longitude && Input.location.lastData.longitude > -71.0875))
                     if ((42.3388 < Latitude && Latitude < 42.3590) &&
                       (-71.0870 > Longitude && Longitude > -71.0875))
                     {
+                        Debug.Log(echolocation);
                         StartCoroutine(InstantiateModel(entry, filenames, importOptions));
                     }
                     
