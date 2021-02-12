@@ -5,28 +5,30 @@ using System.Collections;
 public class LocationScript : MonoBehaviour
 {
     public Text PrintLocation;
-    IEnumerator Start()
+    public static double XPosition;
+    public static double YPosition;
+    public static IEnumerator FindLocation()
     {
         
         // First, check if user has location service enabled
         Debug.Log("Looking for location");
-        PrintLocation.text = "Looking for location";
+        //PrintLocation.text = "Looking for location";
         if (!Input.location.isEnabledByUser)
         {
-            PrintLocation.text = "Location is not enabled by user";
+            //PrintLocation.text = "Location is not enabled by user";
             yield break;
         }
             
 
         // Start service before querying location
         Input.location.Start();
-        PrintLocation.text = "Starting location query...";
+        //PrintLocation.text = "Starting location query...";
 
         // Wait until service initializes
         int maxWait = 20;
         while (Input.location.status == LocationServiceStatus.Initializing && maxWait > 0)
         {
-            PrintLocation.text = "Initializing . . .";
+            //PrintLocation.text = "Initializing . . .";
             yield return new WaitForSeconds(1);
             maxWait--;
         }
@@ -35,7 +37,7 @@ public class LocationScript : MonoBehaviour
         if (maxWait < 1)
         {
             print("Timed out");
-            PrintLocation.text = "Timed out";
+            //PrintLocation.text = "Timed out";
             yield break;
         }
 
@@ -43,14 +45,16 @@ public class LocationScript : MonoBehaviour
         if (Input.location.status == LocationServiceStatus.Failed)
         {
             print("Unable to determine device location");
-            PrintLocation.text = "Unable to determine device location";
+            //PrintLocation.text = "Unable to determine device location";
             yield break;
         }
         else
         {
             // Access granted and location value could be retrieved
             print("Location: " + Input.location.lastData.latitude + " " + Input.location.lastData.longitude + " " + Input.location.lastData.altitude + " " + Input.location.lastData.horizontalAccuracy + " " + Input.location.lastData.timestamp);
-            PrintLocation.text = "Location: " + Input.location.lastData.latitude + " " + Input.location.lastData.longitude + " " + Input.location.lastData.altitude + " " + Input.location.lastData.horizontalAccuracy + " " + Input.location.lastData.timestamp;
+            //PrintLocation.text = "Location: " + Input.location.lastData.latitude + " " + Input.location.lastData.longitude + " " + Input.location.lastData.altitude + " " + Input.location.lastData.horizontalAccuracy + " " + Input.location.lastData.timestamp;
+            XPosition = Input.location.lastData.latitude;
+            YPosition = Input.location.lastData.longitude;
         }
 
         

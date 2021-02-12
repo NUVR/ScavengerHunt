@@ -18,7 +18,7 @@ public class MicrophoneTest : MonoBehaviour
 #endif
     }
 
-    void OnGUI()
+ /*   void OnGUI()
     {
 #if PLATFORM_ANDROID
         if (!Permission.HasUserAuthorizedPermission(Permission.Microphone))
@@ -38,4 +38,5 @@ public class MicrophoneTest : MonoBehaviour
 
         // Now you can do things with the microphone
     }
+ */
 }

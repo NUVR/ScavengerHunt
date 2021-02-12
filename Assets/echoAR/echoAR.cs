@@ -16,10 +16,15 @@ using AsImpL;
 using Siccity.GLTFUtility;
 using System.Globalization;
 using UnityEngine.Video;
+using UnityEngine.UI;
 
 public class echoAR : MonoBehaviour
 {
-
+    public static double XPosition;
+    public static double YPosition;
+    public static double Latitude;
+    public static double Longitude;
+    public Text PrintLocation;
     // Your echoAR API key
     public string APIKey = "<YOUR_API_KEY>";
     private string serverURL;
@@ -29,6 +34,7 @@ public class echoAR : MonoBehaviour
 
     void Start()
     {
+        // StartCoroutine(FindLocation());
         // Debug logs control
         #if UNITY_EDITOR
             Debug.unityLogger.logEnabled = true;
@@ -127,6 +133,8 @@ public class echoAR : MonoBehaviour
             }
             Debug.Log("Database parsed.");
         }
+
+        StartCoroutine(FindLocation());
     }
 
     public Entry ParseEntry(JSONNode entry)
@@ -156,7 +164,9 @@ public class echoAR : MonoBehaviour
                 geolocationTargetObject.setCountry(target["country"]);
                 geolocationTargetObject.setId(target["id"]);
                 geolocationTargetObject.setLatitude(target["latitude"]);
+                Latitude = geolocationTargetObject.getLatitude();
                 geolocationTargetObject.setLongitude(target["longitude"]);
+                Longitude = geolocationTargetObject.getLongitude();
                 geolocationTargetObject.setPlace(target["place"]);
                 geolocationTargetObject.setType(Target.targetType.GEOLOCATION_TARGET);
                 targetObject = geolocationTargetObject;
@@ -296,7 +306,65 @@ public class echoAR : MonoBehaviour
         Debug.Log("Assets downloaded.");
         yield return null;
     }
+    
+    public static IEnumerator FindLocation()
+    {
 
+        Debug.Log("Latitude: " + Latitude);
+        Debug.Log("Latitude: " + Longitude);
+        // First, check if user has location service enabled
+        Debug.Log("Looking for location");
+        //PrintLocation.text = "Looking for location";
+        if (!Input.location.isEnabledByUser)
+        {
+            //PrintLocation.text = "Location is not enabled by user";
+            yield break;
+        }
+
+
+        // Start service before querying location
+        Input.location.Start();
+        //PrintLocation.text = "Starting location query...";
+
+        // Wait until service initializes
+        int maxWait = 20;
+        while (Input.location.status == LocationServiceStatus.Initializing && maxWait > 0)
+        {
+            //PrintLocation.text = "Initializing . . .";
+            yield return new WaitForSeconds(1);
+            maxWait--;
+        }
+
+        // Service didn't initialize in 20 seconds
+        if (maxWait < 1)
+        {
+            print("Timed out");
+            //PrintLocation.text = "Timed out";
+            yield break;
+        }
+
+        // Connection has failed
+        if (Input.location.status == LocationServiceStatus.Failed)
+        {
+            print("Unable to determine device location");
+            //PrintLocation.text = "Unable to determine device location";
+            yield break;
+        }
+        else
+        {
+            // Access granted and location value could be retrieved
+            print("Location: " + Input.location.lastData.latitude + " " + Input.location.lastData.longitude);
+            //PrintLocation.text = "Location: " + Input.location.lastData.latitude + " " + Input.location.lastData.longitude + " " + Input.location.lastData.altitude + " " + Input.location.lastData.horizontalAccuracy + " " + Input.location.lastData.timestamp;
+            XPosition = Input.location.lastData.latitude;
+            
+            YPosition = Input.location.lastData.longitude;
+        }
+
+
+
+        // Stop service if there is no need to query location updates continuously
+        Input.location.Stop();
+    }
     public void DownloadEntryAssets(Entry entry, string serverURL)
     {
         // Check if Unity is supported
@@ -327,7 +395,16 @@ public class echoAR : MonoBehaviour
                 // Instantiate model based on type
                 if (modelHologram.getFilename().EndsWith(".glb")){
                     // Instantiate model without downloading it
-                    StartCoroutine(InstantiateModel(entry, filenames, importOptions));
+                    // LocationScript.FindLocation();
+                    PrintLocation.text = Input.location.lastData.latitude + " " + Input.location.lastData.longitude;
+                    //if ((42.3388 < Input.location.lastData.latitude && Input.location.lastData.latitude < 42.3590) &&
+                    //  (-71.0870 > Input.location.lastData.longitude && Input.location.lastData.longitude > -71.0875))
+                    if ((42.3388 < Latitude && Latitude < 42.3590) &&
+                      (-71.0870 > Longitude && Longitude > -71.0875))
+                    {
+                        StartCoroutine(InstantiateModel(entry, filenames, importOptions));
+                    }
+                    
                 } else {
                     // Download model files and then instantiate
                     StartCoroutine(DownloadFiles(entry, serverURL, filenames, fileStorageIDs, importOptions));
