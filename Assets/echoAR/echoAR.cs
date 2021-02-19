@@ -24,7 +24,7 @@ public class echoAR : MonoBehaviour
     public static double YPosition;
     public static double Latitude;
     public static double Longitude;
-    public static Text echolocation;
+    public Text echolocation;
     // Your echoAR API key
     public string APIKey = "<YOUR_API_KEY>";
     private string serverURL;
@@ -34,6 +34,7 @@ public class echoAR : MonoBehaviour
 
     void Start()
     {
+        echolocation.text = "5";
         // StartCoroutine(FindLocation());
         // Debug logs control
         #if UNITY_EDITOR
@@ -354,12 +355,12 @@ public class echoAR : MonoBehaviour
         {
             // Access granted and location value could be retrieved
             print("Location: " + Input.location.lastData.latitude + " " + Input.location.lastData.longitude);
-            echolocation.text = "Location: " + Input.location.lastData.latitude + " " + Input.location.lastData.longitude + " " + Input.location.lastData.altitude + " " + Input.location.lastData.horizontalAccuracy + " " + Input.location.lastData.timestamp;
+            //echolocation.text = "Location: " + Input.location.lastData.latitude + " " + Input.location.lastData.longitude + " " + Input.location.lastData.altitude + " " + Input.location.lastData.horizontalAccuracy + " " + Input.location.lastData.timestamp;
             XPosition = Input.location.lastData.latitude;
             
             YPosition = Input.location.lastData.longitude;
 
-            echolocation.text = Input.location.lastData.latitude + " " + Input.location.lastData.longitude;
+            //echolocation.text = Input.location.lastData.latitude + " " + Input.location.lastData.longitude;
         }
 
 
@@ -394,18 +395,21 @@ public class echoAR : MonoBehaviour
                 // Import Options
                 ImportOptions importOptions = ParseAdditionalData(entry.getAdditionalData());
 
+                if ((42.3387 < Latitude && Latitude < 42.3590) &&
+                      (-71.0870 > Longitude && Longitude > -71.0876))
+                {
+                    Debug.Log(echolocation);
+                    echolocation.text = Latitude.ToString();
+                    StartCoroutine(InstantiateModel(entry, filenames, importOptions));
+                }
+
                 // Instantiate model based on type
                 if (modelHologram.getFilename().EndsWith(".glb")){
                     // Instantiate model without downloading it
                     // LocationScript.FindLocation();
                     //if ((42.3388 < Input.location.lastData.latitude && Input.location.lastData.latitude < 42.3590) &&
                     //  (-71.0870 > Input.location.lastData.longitude && Input.location.lastData.longitude > -71.0875))
-                    if ((42.3388 < Latitude && Latitude < 42.3590) &&
-                      (-71.0870 > Longitude && Longitude > -71.0875))
-                    {
-                        Debug.Log(echolocation);
-                        StartCoroutine(InstantiateModel(entry, filenames, importOptions));
-                    }
+                    
                     
                 } else {
                     // Download model files and then instantiate

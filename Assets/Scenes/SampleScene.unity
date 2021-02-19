@@ -705,6 +705,11 @@ PrefabInstance:
       propertyPath: PrintLocation
       value: 
       objectReference: {fileID: 460826103}
+    - target: {fileID: 2782816026810004250, guid: e1d4d8772d02a5a47acd9aa621ae8c34,
+        type: 3}
+      propertyPath: echolocation
+      value: 
+      objectReference: {fileID: 90340907}
     - target: {fileID: 6970338143313821952, guid: e1d4d8772d02a5a47acd9aa621ae8c34,
         type: 3}
       propertyPath: m_LocalPosition.x
