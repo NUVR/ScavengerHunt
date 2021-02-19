@@ -167,6 +167,7 @@ public class echoAR : MonoBehaviour
                 geolocationTargetObject.setLatitude(target["latitude"]);
                 Latitude = geolocationTargetObject.getLatitude();
                 Debug.Log("Cycling " + Latitude);
+
                 geolocationTargetObject.setLongitude(target["longitude"]);
                 Longitude = geolocationTargetObject.getLongitude();
                 geolocationTargetObject.setPlace(target["place"]);
