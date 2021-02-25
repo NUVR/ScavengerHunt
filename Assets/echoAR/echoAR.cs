@@ -375,133 +375,138 @@ public class echoAR : MonoBehaviour
         // Check if Unity is supported
         //if (entry.getSupportedSDKs()[Entry.SDKs.UNITY.ordinal()])
         Debug.Log("Download entry assets " + Latitude);
-
-        if ((42.335 < Latitude && Latitude < 42.337) &&
-            (-71.089 > Longitude && Longitude > -71.091))
+        //geolocationTargetObject.getLongitude();
+        Target.targetType targetType = entry.getTarget().getType();
+        if (targetType.Equals(Target.targetType.GEOLOCATION_TARGET))
         {
-            Debug.Log("passed if loop");
-            echolocation.text = Latitude.ToString();
-
-
-
-            if (true)
+            GeolocationTarget geolocationTarget = (GeolocationTarget)entry.getTarget();
+            if ((42.335 < geolocationTarget.getLatitude() && geolocationTarget.getLatitude() < 42.337) &&
+            (-71.089 > geolocationTarget.getLongitude() && geolocationTarget.getLongitude() > -71.091))
             {
-
-                // Get hologram type
-                Hologram.hologramType hologramType = entry.getHologram().getType();
-                // Handle model hologram
-                if (hologramType.Equals(Hologram.hologramType.MODEL_HOLOGRAM))
-                {
-                    // Get model names and ID
-                    ModelHologram modelHologram = (ModelHologram)entry.getHologram();
-
-                    List<string> filenames = new List<string>();
-                    filenames.Add(modelHologram.getFilename());
-                    if (modelHologram.getMaterialFilename() != null) filenames.Add(modelHologram.getMaterialFilename());
-                    if (modelHologram.getTextureFilenames() != null) filenames.AddRange(modelHologram.getTextureFilenames());
-
-                    List<string> fileStorageIDs = new List<string>();
-                    fileStorageIDs.Add(modelHologram.getStorageID());
-                    if (modelHologram.getMaterialStorageID() != null) fileStorageIDs.Add(modelHologram.getMaterialStorageID());
-                    if (modelHologram.getTextureStorageIDs() != null) fileStorageIDs.AddRange(modelHologram.getTextureStorageIDs());
-
-                    // Import Options
-                    ImportOptions importOptions = ParseAdditionalData(entry.getAdditionalData());
+                Debug.Log("passed if loop");
+                echolocation.text = Latitude.ToString();
 
 
-                    // Instantiate model based on type
-                    if (modelHologram.getFilename().EndsWith(".glb"))
-                    {
-                        // Instantiate model without downloading it
-                        // LocationScript.FindLocation();
-                        //if ((42.3388 < Input.location.lastData.latitude && Input.location.lastData.latitude < 42.3590) &&
-                        //  (-71.0870 > Input.location.lastData.longitude && Input.location.lastData.longitude > -71.0875))
-                        StartCoroutine(InstantiateModel(entry, filenames, importOptions));
 
-                    }
-                    else
-                    {
-                        // Download model files and then instantiate
-                        StartCoroutine(DownloadFiles(entry, serverURL, filenames, fileStorageIDs, importOptions));
-                    }
-                    // Handle video hologram
-                }
-                else if (hologramType.Equals(Hologram.hologramType.VIDEO_HOLOGRAM))
+                if (true)
                 {
 
-                    // Get video
-                    VideoHologram videoHologram = (VideoHologram)entry.getHologram();
-
-                    // Create primitive plane for the video to appear on
-                    GameObject videoPlane = GameObject.CreatePrimitive(PrimitiveType.Plane);
-
-                    // Set video plane position
-                    videoPlane.transform.parent = this.gameObject.transform;
-                    videoPlane.transform.position = this.gameObject.transform.position;
-
-                    // Set video plane size
-                    string value = "";
-                    float height = (entry.getAdditionalData() != null && entry.getAdditionalData().TryGetValue("height", out value)) ? float.Parse(value) * 0.01f : 1;
-                    float width = (entry.getAdditionalData() != null && entry.getAdditionalData().TryGetValue("width", out value)) ? float.Parse(value) * 0.01f : 2;
-
-                    // Scale video plane
-                    videoPlane.transform.localScale = new Vector3(width, height, height);
-
-                    // Attach VideoPlayer to video plane
-                    var videoPlayer = videoPlane.AddComponent<VideoPlayer>();
-                    videoPlayer.playOnAwake = false;
-
-                    // Attach a CustomBehaviour Component
-                    videoPlane.AddComponent<CustomBehaviour>().entry = entry;
-
-                    // Set gameobject name to video name
-                    videoPlane.name = videoHologram.getFilename();
-
-                    // Set video URL
-                    videoPlayer.url = serverURL + "&file=" + videoHologram.getStorageID();
-
-                    // Play video
-                    videoPlayer.Play();
-
-                    // Mute
-                    if (entry.getAdditionalData() != null && entry.getAdditionalData().TryGetValue("mute", out value) && value.Equals("true"))
+                    // Get hologram type
+                    Hologram.hologramType hologramType = entry.getHologram().getType();
+                    // Handle model hologram
+                    if (hologramType.Equals(Hologram.hologramType.MODEL_HOLOGRAM))
                     {
-                        for (ushort i = 0; i < videoPlayer.controlledAudioTrackCount; ++i)
-                            videoPlayer.SetDirectAudioMute(i, true);
+                        // Get model names and ID
+                        ModelHologram modelHologram = (ModelHologram)entry.getHologram();
+
+                        List<string> filenames = new List<string>();
+                        filenames.Add(modelHologram.getFilename());
+                        if (modelHologram.getMaterialFilename() != null) filenames.Add(modelHologram.getMaterialFilename());
+                        if (modelHologram.getTextureFilenames() != null) filenames.AddRange(modelHologram.getTextureFilenames());
+
+                        List<string> fileStorageIDs = new List<string>();
+                        fileStorageIDs.Add(modelHologram.getStorageID());
+                        if (modelHologram.getMaterialStorageID() != null) fileStorageIDs.Add(modelHologram.getMaterialStorageID());
+                        if (modelHologram.getTextureStorageIDs() != null) fileStorageIDs.AddRange(modelHologram.getTextureStorageIDs());
+
+                        // Import Options
+                        ImportOptions importOptions = ParseAdditionalData(entry.getAdditionalData());
+
+
+                        // Instantiate model based on type
+                        if (modelHologram.getFilename().EndsWith(".glb"))
+                        {
+                            // Instantiate model without downloading it
+                            // LocationScript.FindLocation();
+                            //if ((42.3388 < Input.location.lastData.latitude && Input.location.lastData.latitude < 42.3590) &&
+                            //  (-71.0870 > Input.location.lastData.longitude && Input.location.lastData.longitude > -71.0875))
+                            StartCoroutine(InstantiateModel(entry, filenames, importOptions));
+
+                        }
+                        else
+                        {
+                            // Download model files and then instantiate
+                            StartCoroutine(DownloadFiles(entry, serverURL, filenames, fileStorageIDs, importOptions));
+                        }
+                        // Handle video hologram
                     }
-                    // Handle image hologram
-                }
-                else if (hologramType.Equals(Hologram.hologramType.IMAGE_HOLOGRAM))
-                {
+                    else if (hologramType.Equals(Hologram.hologramType.VIDEO_HOLOGRAM))
+                    {
 
-                    // Get image
-                    ImageHologram imageHologram = (ImageHologram)entry.getHologram();
+                        // Get video
+                        VideoHologram videoHologram = (VideoHologram)entry.getHologram();
 
-                    // Create primitive plane for the image to appear on
-                    GameObject imagePlane = GameObject.CreatePrimitive(PrimitiveType.Plane);
+                        // Create primitive plane for the video to appear on
+                        GameObject videoPlane = GameObject.CreatePrimitive(PrimitiveType.Plane);
 
-                    // Set image plane position
-                    imagePlane.transform.parent = this.gameObject.transform;
-                    imagePlane.transform.position = this.gameObject.transform.position;
+                        // Set video plane position
+                        videoPlane.transform.parent = this.gameObject.transform;
+                        videoPlane.transform.position = this.gameObject.transform.position;
 
-                    // Set image plane size
-                    string value = "";
-                    float height = (entry.getAdditionalData() != null && entry.getAdditionalData().TryGetValue("height", out value)) ? float.Parse(value) * 0.01f : 1;
-                    float width = (entry.getAdditionalData() != null && entry.getAdditionalData().TryGetValue("width", out value)) ? float.Parse(value) * 0.01f : 1;
+                        // Set video plane size
+                        string value = "";
+                        float height = (entry.getAdditionalData() != null && entry.getAdditionalData().TryGetValue("height", out value)) ? float.Parse(value) * 0.01f : 1;
+                        float width = (entry.getAdditionalData() != null && entry.getAdditionalData().TryGetValue("width", out value)) ? float.Parse(value) * 0.01f : 2;
 
-                    // Scale image plane
-                    imagePlane.transform.localScale = new Vector3(width, height, height);
+                        // Scale video plane
+                        videoPlane.transform.localScale = new Vector3(width, height, height);
 
-                    // Set gameobject name to image name
-                    imagePlane.name = imageHologram.getFilename();
+                        // Attach VideoPlayer to video plane
+                        var videoPlayer = videoPlane.AddComponent<VideoPlayer>();
+                        videoPlayer.playOnAwake = false;
 
-                    // Set image URL
-                    string imageURL = (entry.getAdditionalData() != null && entry.getAdditionalData().TryGetValue("compressedImageStorageID", out value)) ?
-                        serverURL + "&file=" + value :
-                        serverURL + "&file=" + imageHologram.getStorageID();
+                        // Attach a CustomBehaviour Component
+                        videoPlane.AddComponent<CustomBehaviour>().entry = entry;
 
-                    // Download image file and then instantiate
-                    StartCoroutine(DownloadandInitiateImage(entry, imageURL, imagePlane));
+                        // Set gameobject name to video name
+                        videoPlane.name = videoHologram.getFilename();
+
+                        // Set video URL
+                        videoPlayer.url = serverURL + "&file=" + videoHologram.getStorageID();
+
+                        // Play video
+                        videoPlayer.Play();
+
+                        // Mute
+                        if (entry.getAdditionalData() != null && entry.getAdditionalData().TryGetValue("mute", out value) && value.Equals("true"))
+                        {
+                            for (ushort i = 0; i < videoPlayer.controlledAudioTrackCount; ++i)
+                                videoPlayer.SetDirectAudioMute(i, true);
+                        }
+                        // Handle image hologram
+                    }
+                    else if (hologramType.Equals(Hologram.hologramType.IMAGE_HOLOGRAM))
+                    {
+
+                        // Get image
+                        ImageHologram imageHologram = (ImageHologram)entry.getHologram();
+
+                        // Create primitive plane for the image to appear on
+                        GameObject imagePlane = GameObject.CreatePrimitive(PrimitiveType.Plane);
+
+                        // Set image plane position
+                        imagePlane.transform.parent = this.gameObject.transform;
+                        imagePlane.transform.position = this.gameObject.transform.position;
+
+                        // Set image plane size
+                        string value = "";
+                        float height = (entry.getAdditionalData() != null && entry.getAdditionalData().TryGetValue("height", out value)) ? float.Parse(value) * 0.01f : 1;
+                        float width = (entry.getAdditionalData() != null && entry.getAdditionalData().TryGetValue("width", out value)) ? float.Parse(value) * 0.01f : 1;
+
+                        // Scale image plane
+                        imagePlane.transform.localScale = new Vector3(width, height, height);
+
+                        // Set gameobject name to image name
+                        imagePlane.name = imageHologram.getFilename();
+
+                        // Set image URL
+                        string imageURL = (entry.getAdditionalData() != null && entry.getAdditionalData().TryGetValue("compressedImageStorageID", out value)) ?
+                            serverURL + "&file=" + value :
+                            serverURL + "&file=" + imageHologram.getStorageID();
+
+                        // Download image file and then instantiate
+                        StartCoroutine(DownloadandInitiateImage(entry, imageURL, imagePlane));
+                    }
                 }
             }
         }
