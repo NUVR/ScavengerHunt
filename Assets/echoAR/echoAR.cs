@@ -20,10 +20,28 @@ using UnityEngine.UI;
 
 public class echoAR : MonoBehaviour
 {
-    public static double XPosition;
-    public static double YPosition;
+    public static float XPosition = 42.33681f;
+    public static float YPosition=-71.0903f;
     public static double Latitude;
     public static double Longitude;
+    public double[] lats;
+    public double[] longs;
+    public double PaulRevereLat;
+    public double PaulRevereLong;
+    public double FenwayLat;
+    public double FenwayLong;
+    public double PublicParkLat;
+    public double PublicParkLong;
+    public double reflectionPoolLat;
+    public double reflectionPoolLong;
+    public double SnellLat;
+    public double SnellLong;
+    public double StwestLat;
+    public double StwestLong;
+    public double PaneraLat;
+    public double PaneraLong;
+
+
     public Text echolocation;
     // Your echoAR API key
     public string APIKey = "<YOUR_API_KEY>";
@@ -379,10 +397,13 @@ public class echoAR : MonoBehaviour
         Target.targetType targetType = entry.getTarget().getType();
         if (targetType.Equals(Target.targetType.GEOLOCATION_TARGET))
         {
+            
             GeolocationTarget geolocationTarget = (GeolocationTarget)entry.getTarget();
-            if ((42.335 < geolocationTarget.getLatitude() && geolocationTarget.getLatitude() < 42.337) &&
+            Debug.Log("float" + geolocationTarget.getLatitude());
+            if (Mathf.Sqrt((geolocationTarget.getLatitude()-XPosition)*(geolocationTarget.getLatitude() - XPosition) + (geolocationTarget.getLongitude() - YPosition)* (geolocationTarget.getLongitude() - YPosition)) <.002) { 
+          /*  if ((42.335 < geolocationTarget.getLatitude() && geolocationTarget.getLatitude() < 42.337) &&
             (-71.089 > geolocationTarget.getLongitude() && geolocationTarget.getLongitude() > -71.091))
-            {
+            {*/
                 Debug.Log("passed if loop");
                 echolocation.text = Latitude.ToString();
 
