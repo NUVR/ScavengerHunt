@@ -20,28 +20,15 @@ using UnityEngine.UI;
 
 public class echoAR : MonoBehaviour
 {
-    public static float XPosition = 42.33681f;
-    public static float YPosition=-71.0903f;
+    public static float XPosition; //= 42.33681f;
+    public static float YPosition; //=-71.0903f;
     public static double Latitude;
     public static double Longitude;
-    public double[] lats;
-    public double[] longs;
-    public double PaulRevereLat;
-    public double PaulRevereLong;
-    public double FenwayLat;
-    public double FenwayLong;
-    public double PublicParkLat;
-    public double PublicParkLong;
-    public double reflectionPoolLat;
-    public double reflectionPoolLong;
-    public double SnellLat;
-    public double SnellLong;
-    public double StwestLat;
-    public double StwestLong;
-    public double PaneraLat;
-    public double PaneraLong;
+    static int levelReached;
 
 
+
+    public Text location;
     public Text echolocation;
     // Your echoAR API key
     public string APIKey = "<YOUR_API_KEY>";
@@ -52,7 +39,9 @@ public class echoAR : MonoBehaviour
 
     void Start()
     {
-        echolocation.text = "5";
+        Debug.Log("start reached");
+       echolocation.text = "5";
+        location.text = "5";
         // StartCoroutine(FindLocation());
         // Debug logs control
         #if UNITY_EDITOR
@@ -335,10 +324,10 @@ public class echoAR : MonoBehaviour
         Debug.Log("Latitude: " + Longitude);
         // First, check if user has location service enabled
         Debug.Log("Looking for location");
-        //echolocation.text = "Looking for location";
+       // echolocation.text = "Looking for location";
         if (!Input.location.isEnabledByUser)
         {
-            //echolocation.text = "Location is not enabled by user";
+            levelReached = 1;
             yield break;
         }
 
@@ -346,12 +335,13 @@ public class echoAR : MonoBehaviour
         // Start service before querying location
         Input.location.Start();
         //echolocation.text = "Starting location query...";
-
+        levelReached = 2;
         // Wait until service initializes
         int maxWait = 20;
         while (Input.location.status == LocationServiceStatus.Initializing && maxWait > 0)
         {
             //echolocation.text = "Initializing . . .";
+            levelReached = 3;
             yield return new WaitForSeconds(1);
             maxWait--;
         }
@@ -361,6 +351,8 @@ public class echoAR : MonoBehaviour
         {
             print("Timed out");
             //echolocation.text = "Timed out";
+            levelReached = 4;
+
             yield break;
         }
 
@@ -369,13 +361,16 @@ public class echoAR : MonoBehaviour
         {
             print("Unable to determine device location");
             //echolocation.text = "Unable to determine device location";
+            levelReached = 6;
+
             yield break;
         }
         else
         {
             // Access granted and location value could be retrieved
             print("Location: " + Input.location.lastData.latitude + " " + Input.location.lastData.longitude);
-            //echolocation.text = "Location: " + Input.location.lastData.latitude + " " + Input.location.lastData.longitude + " " + Input.location.lastData.altitude + " " + Input.location.lastData.horizontalAccuracy + " " + Input.location.lastData.timestamp;
+            //   echolocation.text = "Location: " + Input.location.lastData.latitude + " " + Input.location.lastData.longitude + " " + Input.location.lastData.altitude + " " + Input.location.lastData.horizontalAccuracy + " " + Input.location.lastData.timestamp;
+            levelReached = 7;
             XPosition = Input.location.lastData.latitude;
             
             YPosition = Input.location.lastData.longitude;
@@ -390,6 +385,7 @@ public class echoAR : MonoBehaviour
     }
     public void DownloadEntryAssets(Entry entry, string serverURL)
     {
+        FindLocation();
         // Check if Unity is supported
         //if (entry.getSupportedSDKs()[Entry.SDKs.UNITY.ordinal()])
         Debug.Log("Download entry assets " + Latitude);
@@ -405,7 +401,7 @@ public class echoAR : MonoBehaviour
             (-71.089 > geolocationTarget.getLongitude() && geolocationTarget.getLongitude() > -71.091))
             {*/
                 Debug.Log("passed if loop");
-                echolocation.text = Latitude.ToString();
+                echolocation.text = levelReached + "  " + Latitude.ToString();
 
 
 

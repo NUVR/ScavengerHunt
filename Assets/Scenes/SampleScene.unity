@@ -697,6 +697,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2782816026810004250, guid: e1d4d8772d02a5a47acd9aa621ae8c34,
         type: 3}
+      propertyPath: reflectionPool.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2782816026810004250, guid: e1d4d8772d02a5a47acd9aa621ae8c34,
+        type: 3}
       propertyPath: APIKey
       value: jolly-butterfly-0364
       objectReference: {fileID: 0}
@@ -710,6 +715,36 @@ PrefabInstance:
       propertyPath: echolocation
       value: 
       objectReference: {fileID: 90340907}
+    - target: {fileID: 2782816026810004250, guid: e1d4d8772d02a5a47acd9aa621ae8c34,
+        type: 3}
+      propertyPath: PaulRevereLat
+      value: 42.363929
+      objectReference: {fileID: 0}
+    - target: {fileID: 2782816026810004250, guid: e1d4d8772d02a5a47acd9aa621ae8c34,
+        type: 3}
+      propertyPath: PaulRevereLong
+      value: -71.0537322
+      objectReference: {fileID: 0}
+    - target: {fileID: 2782816026810004250, guid: e1d4d8772d02a5a47acd9aa621ae8c34,
+        type: 3}
+      propertyPath: FenwayLat
+      value: 42.3468191
+      objectReference: {fileID: 0}
+    - target: {fileID: 2782816026810004250, guid: e1d4d8772d02a5a47acd9aa621ae8c34,
+        type: 3}
+      propertyPath: FenwayLong
+      value: -71.0972285
+      objectReference: {fileID: 0}
+    - target: {fileID: 2782816026810004250, guid: e1d4d8772d02a5a47acd9aa621ae8c34,
+        type: 3}
+      propertyPath: PublicParkLat
+      value: 42.35401908
+      objectReference: {fileID: 0}
+    - target: {fileID: 2782816026810004250, guid: e1d4d8772d02a5a47acd9aa621ae8c34,
+        type: 3}
+      propertyPath: PublicParkLong
+      value: -71.06967257
+      objectReference: {fileID: 0}
     - target: {fileID: 6970338143313821952, guid: e1d4d8772d02a5a47acd9aa621ae8c34,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -914,7 +949,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c89ed3fb0bf2ec45a8ea4d218b9ce34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PrintLocation: {fileID: 90340907}
 --- !u!114 &1902810806
 MonoBehaviour:
   m_ObjectHideFlags: 0
