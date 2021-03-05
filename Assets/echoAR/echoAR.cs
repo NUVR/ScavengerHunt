@@ -20,8 +20,8 @@ using UnityEngine.UI;
 
 public class echoAR : MonoBehaviour
 {
-    public static float XPosition = 42.33681f;
-    public static float YPosition =-71.0903f;
+    public static float XPosition; //= 42.33681f;
+    public static float YPosition; //=-71.0903f;
     public static double Latitude;
     public static double Longitude;
     static int levelReached;
@@ -42,7 +42,7 @@ public class echoAR : MonoBehaviour
         Debug.Log("start reached");
        echolocation.text = "5";
         location.text = "5";
-         StartCoroutine(FindLocation());
+        // StartCoroutine(FindLocation());
         // Debug logs control
         #if UNITY_EDITOR
             Debug.unityLogger.logEnabled = true;
@@ -385,7 +385,7 @@ public class echoAR : MonoBehaviour
     }
     public void DownloadEntryAssets(Entry entry, string serverURL)
     {
-       // FindLocation();
+        FindLocation();
         // Check if Unity is supported
         //if (entry.getSupportedSDKs()[Entry.SDKs.UNITY.ordinal()])
         Debug.Log("Download entry assets " + Latitude);
