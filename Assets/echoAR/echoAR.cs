@@ -20,8 +20,8 @@ using UnityEngine.UI;
 
 public class echoAR : MonoBehaviour
 {
-    public static float XPosition = 42.33681f;
-    public static float YPosition =-71.0903f;
+    public static float XPosition;// = 42.33681f;
+    public static float YPosition;// =-71.0903f;
     public static double Latitude;
     public static double Longitude;
     static int levelReached;
@@ -42,7 +42,7 @@ public class echoAR : MonoBehaviour
         Debug.Log("start reached");
        echolocation.text = "5";
         location.text = "5";
-         StartCoroutine(FindLocation());
+       // StartCoroutine(FindLocation());
         // Debug logs control
         #if UNITY_EDITOR
             Debug.unityLogger.logEnabled = true;
@@ -142,7 +142,7 @@ public class echoAR : MonoBehaviour
             Debug.Log("Database parsed.");
         }
 
-        StartCoroutine(FindLocation());
+       //StartCoroutine(FindLocation());
     }
 
     public Entry ParseEntry(JSONNode entry)
@@ -306,6 +306,7 @@ public class echoAR : MonoBehaviour
     IEnumerator DownloadAssets(string serverURL)
     {
         Debug.Log("Downloading assets...");
+        yield return new WaitForSeconds(1);
 
         // Iterate over all database entries
         foreach (Entry entry in dbObject.getEntries())
@@ -319,6 +320,7 @@ public class echoAR : MonoBehaviour
     
     public static IEnumerator FindLocation()
     {
+        levelReached = 0;
 
         Debug.Log("Latitude: " + Latitude);
         Debug.Log("Latitude: " + Longitude);
@@ -385,7 +387,19 @@ public class echoAR : MonoBehaviour
     }
     public void DownloadEntryAssets(Entry entry, string serverURL)
     {
-       // FindLocation();
+        Debug.Log("Download started");
+        try
+        {
+            Debug.Log("tried");
+            StartCoroutine(FindLocation());
+        }
+        catch (System.Exception e)
+        {
+            Debug.Log("failed");
+        }
+        Debug.Log(levelReached);
+        echolocation.text = levelReached + "  " + XPosition;
+
         // Check if Unity is supported
         //if (entry.getSupportedSDKs()[Entry.SDKs.UNITY.ordinal()])
         Debug.Log("Download entry assets " + Latitude);
