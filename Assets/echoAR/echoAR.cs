@@ -20,8 +20,8 @@ using UnityEngine.UI;
 
 public class echoAR : MonoBehaviour
 {
-    public static float XPosition;// = 42.33681f;
-    public static float YPosition;// =-71.0903f;
+    public static float FoundXPos;// = 42.33681f;
+    public static float FoundYPos;// =-71.0903f;
     public static double Latitude;
     public static double Longitude;
     static int levelReached;
@@ -113,6 +113,7 @@ public class echoAR : MonoBehaviour
         if (!json.ToLower().Contains("not found"))
         {
             // Start Websocket client
+            yield return new WaitForSeconds(3);
             StartCoroutine(WebsocketClient());
             // Download Assets
             StartCoroutine(DownloadAssets(serverURL));
@@ -318,6 +319,7 @@ public class echoAR : MonoBehaviour
         yield return null;
     }
     
+    /*
     public static IEnumerator FindLocation()
     {
         levelReached = 0;
@@ -338,8 +340,9 @@ public class echoAR : MonoBehaviour
         Input.location.Start();
         //echolocation.text = "Starting location query...";
         levelReached = 2;
+        yield return new WaitForSeconds(3);
         // Wait until service initializes
-        int maxWait = 20;
+        int maxWait = 2;
         while (Input.location.status == LocationServiceStatus.Initializing && maxWait > 0)
         {
             //echolocation.text = "Initializing . . .";
@@ -373,9 +376,9 @@ public class echoAR : MonoBehaviour
             print("Location: " + Input.location.lastData.latitude + " " + Input.location.lastData.longitude);
             //   echolocation.text = "Location: " + Input.location.lastData.latitude + " " + Input.location.lastData.longitude + " " + Input.location.lastData.altitude + " " + Input.location.lastData.horizontalAccuracy + " " + Input.location.lastData.timestamp;
             levelReached = 7;
-            XPosition = Input.location.lastData.latitude;
+            FoundXPos = Input.location.lastData.latitude;
             
-            YPosition = Input.location.lastData.longitude;
+            FoundYPos = Input.location.lastData.longitude;
 
             //echolocation.text = Input.location.lastData.latitude + " " + Input.location.lastData.longitude;
         }
@@ -385,20 +388,24 @@ public class echoAR : MonoBehaviour
         // Stop service if there is no need to query location updates continuously
         Input.location.Stop();
     }
+    */
+
     public void DownloadEntryAssets(Entry entry, string serverURL)
     {
         Debug.Log("Download started");
         try
         {
             Debug.Log("tried");
-            StartCoroutine(FindLocation());
+            // StartCoroutine(FindLocation());
         }
         catch (System.Exception e)
         {
             Debug.Log("failed");
         }
+        FoundXPos = (float)LocationScript.XPosition;
+        FoundYPos = (float)LocationScript.YPosition;
         Debug.Log(levelReached);
-        echolocation.text = levelReached + "  " + XPosition;
+        echolocation.text = FoundXPos + ",  " + FoundYPos;
 
         // Check if Unity is supported
         //if (entry.getSupportedSDKs()[Entry.SDKs.UNITY.ordinal()])
@@ -407,11 +414,11 @@ public class echoAR : MonoBehaviour
         Target.targetType targetType = entry.getTarget().getType();
         if (targetType.Equals(Target.targetType.GEOLOCATION_TARGET))
         {
-            
             GeolocationTarget geolocationTarget = (GeolocationTarget)entry.getTarget();
             Debug.Log("float" + geolocationTarget.getLatitude());
-            if (Mathf.Sqrt((geolocationTarget.getLatitude()-XPosition)*(geolocationTarget.getLatitude() - XPosition) + (geolocationTarget.getLongitude() - YPosition)* (geolocationTarget.getLongitude() - YPosition)) <.002) { 
-          /*  if ((42.335 < geolocationTarget.getLatitude() && geolocationTarget.getLatitude() < 42.337) &&
+            if (Mathf.Sqrt((geolocationTarget.getLatitude()-FoundXPos)*(geolocationTarget.getLatitude() - FoundXPos) + (geolocationTarget.getLongitude() - FoundYPos)* (geolocationTarget.getLongitude() - FoundYPos)) <.02) { 
+                
+                /*  if ((42.335 < geolocationTarget.getLatitude() && geolocationTarget.getLatitude() < 42.337) &&
             (-71.089 > geolocationTarget.getLongitude() && geolocationTarget.getLongitude() > -71.091))
             {*/
                 Debug.Log("passed if loop");
