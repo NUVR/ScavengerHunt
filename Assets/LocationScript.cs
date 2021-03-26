@@ -137,6 +137,6 @@ public class LocationScript : MonoBehaviour
 
     private void Update()
     {
-        PrintLocation.text = XPosition + ", " + YPosition;
+        // PrintLocation.text = XPosition + ", " + YPosition;
     }
 }

@@ -416,13 +416,15 @@ public class echoAR : MonoBehaviour
         {
             GeolocationTarget geolocationTarget = (GeolocationTarget)entry.getTarget();
             Debug.Log("float" + geolocationTarget.getLatitude());
-            if (Mathf.Sqrt((geolocationTarget.getLatitude()-FoundXPos)*(geolocationTarget.getLatitude() - FoundXPos) + (geolocationTarget.getLongitude() - FoundYPos)* (geolocationTarget.getLongitude() - FoundYPos)) <.02) { 
+            // Switch find location to a fixed update to every second or so
+            if (Mathf.Sqrt((geolocationTarget.getLatitude()-FoundXPos)*(geolocationTarget.getLatitude() - FoundXPos) + (geolocationTarget.getLongitude() - FoundYPos)* (geolocationTarget.getLongitude() - FoundYPos)) <.001) { 
                 
                 /*  if ((42.335 < geolocationTarget.getLatitude() && geolocationTarget.getLatitude() < 42.337) &&
             (-71.089 > geolocationTarget.getLongitude() && geolocationTarget.getLongitude() > -71.091))
             {*/
                 Debug.Log("passed if loop");
-                echolocation.text = levelReached + "  " + Latitude.ToString();
+                echolocation.text = levelReached + ",  " + FoundXPos.ToString();
+                location.text = Input.location.lastData.timestamp.ToString();
 
 
 
