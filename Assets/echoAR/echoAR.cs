@@ -25,14 +25,14 @@ public class echoAR : MonoBehaviour
     public static double Latitude;
     public static double Longitude;
     static int levelReached;
-
+    static int time = 0;
 
 
     public Text location;
     public Text echolocation;
     // Your echoAR API key
     public string APIKey = "<YOUR_API_KEY>";
-    private string serverURL;
+    static public string serverURL;
 
     // echoAR Database
     static public Database dbObject;
@@ -40,16 +40,16 @@ public class echoAR : MonoBehaviour
     void Start()
     {
         Debug.Log("start reached");
-       echolocation.text = "5";
+        echolocation.text = "5";
         location.text = "5";
-       // StartCoroutine(FindLocation());
+        // StartCoroutine(FindLocation());
         // Debug logs control
-        #if UNITY_EDITOR
-            Debug.unityLogger.logEnabled = true;
-        #else
+#if UNITY_EDITOR
+        Debug.unityLogger.logEnabled = true;
+#else
             Debug.unityLogger.logEnabled = false;
-        #endif
-        
+#endif
+
         // The echoAR server details
         serverURL = "https://console.echoar.xyz/query?key=" + APIKey;
 
@@ -65,6 +65,40 @@ public class echoAR : MonoBehaviour
         {
             Debug.Log(e);
         }
+
+    }
+
+    
+
+    void Update()
+    {
+        Debug.Log("Bye");
+
+        StartCoroutine(FindLocation());
+
+        location.text = time.ToString();
+
+        if (!(FoundXPos == Input.location.lastData.latitude && FoundYPos == Input.location.lastData.longitude))
+        {
+
+            try
+            {
+                // Query database for all the entires
+                StartCoroutine(QueryDatabase(serverURL));
+                // What to query a single entry? Replace the above line with:
+                // StartCoroutine(QueryDatabase(serverURL + "&entry=<ENTRY_ID>"));
+            }
+            catch (System.Exception e)
+            {
+                Debug.Log(e);
+            }
+
+            FoundXPos = Input.location.lastData.latitude;
+
+            FoundYPos = Input.location.lastData.longitude;
+
+        }
+
 
     }
 
@@ -143,7 +177,7 @@ public class echoAR : MonoBehaviour
             Debug.Log("Database parsed.");
         }
 
-       //StartCoroutine(FindLocation());
+        //StartCoroutine(FindLocation());
     }
 
     public Entry ParseEntry(JSONNode entry)
@@ -269,7 +303,8 @@ public class echoAR : MonoBehaviour
                 modelHologramObject.setType(Hologram.hologramType.MODEL_HOLOGRAM);
                 modelHologramObject.setTarget(targetObject);
                 // If applicable, update model hologram with .glb version
-                if (entry["additionalData"]["glbHologramStorageID"] != null) {
+                if (entry["additionalData"]["glbHologramStorageID"] != null)
+                {
                     modelHologramObject.setFilename(entry["additionalData"]["glbHologramStorageFilename"]);
                     modelHologramObject.setStorageID(entry["additionalData"]["glbHologramStorageID"]);
                 }
@@ -318,10 +353,13 @@ public class echoAR : MonoBehaviour
         Debug.Log("Assets downloaded.");
         yield return null;
     }
+
     
-    /*
     public static IEnumerator FindLocation()
     {
+        time++;
+        Debug.Log("testTime");
+
         levelReached = 0;
 
         Debug.Log("Latitude: " + Latitude);
@@ -376,9 +414,11 @@ public class echoAR : MonoBehaviour
             print("Location: " + Input.location.lastData.latitude + " " + Input.location.lastData.longitude);
             //   echolocation.text = "Location: " + Input.location.lastData.latitude + " " + Input.location.lastData.longitude + " " + Input.location.lastData.altitude + " " + Input.location.lastData.horizontalAccuracy + " " + Input.location.lastData.timestamp;
             levelReached = 7;
-            FoundXPos = Input.location.lastData.latitude;
+
             
-            FoundYPos = Input.location.lastData.longitude;
+
+            
+
 
             //echolocation.text = Input.location.lastData.latitude + " " + Input.location.lastData.longitude;
         }
@@ -388,7 +428,7 @@ public class echoAR : MonoBehaviour
         // Stop service if there is no need to query location updates continuously
         Input.location.Stop();
     }
-    */
+    
 
     public void DownloadEntryAssets(Entry entry, string serverURL)
     {
@@ -417,8 +457,9 @@ public class echoAR : MonoBehaviour
             GeolocationTarget geolocationTarget = (GeolocationTarget)entry.getTarget();
             Debug.Log("float" + geolocationTarget.getLatitude());
             // Switch find location to a fixed update to every second or so
-            if (Mathf.Sqrt((geolocationTarget.getLatitude()-FoundXPos)*(geolocationTarget.getLatitude() - FoundXPos) + (geolocationTarget.getLongitude() - FoundYPos)* (geolocationTarget.getLongitude() - FoundYPos)) <.001) { 
-                
+            if (Mathf.Sqrt((geolocationTarget.getLatitude() - FoundXPos) * (geolocationTarget.getLatitude() - FoundXPos) + (geolocationTarget.getLongitude() - FoundYPos) * (geolocationTarget.getLongitude() - FoundYPos)) < .001)
+            {
+
                 /*  if ((42.335 < geolocationTarget.getLatitude() && geolocationTarget.getLatitude() < 42.337) &&
             (-71.089 > geolocationTarget.getLongitude() && geolocationTarget.getLongitude() > -71.091))
             {*/
@@ -585,12 +626,15 @@ public class echoAR : MonoBehaviour
         yield return www.SendWebRequest();
         // Get renderer
         MeshRenderer meshRenderer = imagePlane.GetComponent<MeshRenderer>();
-        if (www.isNetworkError || www.isHttpError) {
+        if (www.isNetworkError || www.isHttpError)
+        {
             Debug.Log(www.error);
             meshRenderer.material.color = Color.white;
-        } else {
+        }
+        else
+        {
             // Set texture
-            Texture texture = ((DownloadHandlerTexture)www.downloadHandler).texture;            
+            Texture texture = ((DownloadHandlerTexture)www.downloadHandler).texture;
             // Set image as texture
             meshRenderer.material.color = Color.white;
             meshRenderer.material.mainTexture = texture;
@@ -654,40 +698,42 @@ public class echoAR : MonoBehaviour
         Debug.Log("Instantiating model " + filenames[0]);
 
         // Refresh assets in editor
-        #if UNITY_EDITOR
-                if (Application.isEditor) UnityEditor.AssetDatabase.Refresh();
-        #endif
+#if UNITY_EDITOR
+        if (Application.isEditor) UnityEditor.AssetDatabase.Refresh();
+#endif
 
         // Set shader
         string shader = null;
         if (entry.getAdditionalData() != null) entry.getAdditionalData().TryGetValue("shader", out shader);
-        #if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
+#if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
             // In mobile, if shader isn't set then force a lagacy shader
             if (shader == null) shader = "Legacy Shaders/Diffuse";
-        #endif
+#endif
 
         // Import model
         string filepath = Application.persistentDataPath + "/" + filenames[0];
         string extension = Path.GetExtension(filepath).ToLower();
         // Load file by extension
-        if (extension == ".glb") {
+        if (extension == ".glb")
+        {
             GameObject result = new GameObject();
             result.name = filenames[0];
             var glb = result.AddComponent<GLTFast.GlbAsset>();
             glb.shader = shader;
-            glb.url = serverURL + "&file=" + ((ModelHologram) entry.getHologram()).getStorageID();
+            glb.url = serverURL + "&file=" + ((ModelHologram)entry.getHologram()).getStorageID();
             result.AddComponent<CustomBehaviour>().entry = entry;
             // Set game object parent and position
             result.transform.parent = this.gameObject.transform;
             result.transform.position = this.gameObject.transform.position;
-            #if UNITY_EDITOR
-                // Caculate render times
-                glb.onLoadComplete += calcRenderTime;
-                renderIndex = filenames[0];
-                calcRenderTime(false, null);
-            #endif
+#if UNITY_EDITOR
+            // Caculate render times
+            glb.onLoadComplete += calcRenderTime;
+            renderIndex = filenames[0];
+            calcRenderTime(false, null);
+#endif
         }
-        else if (extension == ".gltf") {
+        else if (extension == ".gltf")
+        {
             GameObject result = Importer.LoadFromFile(filepath, shader);
             result.name = filenames[0];
             result.AddComponent<CustomBehaviour>().entry = entry;
@@ -695,16 +741,18 @@ public class echoAR : MonoBehaviour
             result.transform.parent = this.gameObject.transform;
             result.transform.position = this.gameObject.transform.position;
         }
-        else if (extension == ".obj") {
+        else if (extension == ".obj")
+        {
             // Check how many files were uploaded to console
             int numFiles = filenames.Count;
             List<string> texNames = new List<string>();
-            if (numFiles >= 3) {
-                texNames = filenames.GetRange(2, numFiles-2);
+            if (numFiles >= 3)
+            {
+                texNames = filenames.GetRange(2, numFiles - 2);
             }
             gameObject.AddComponent<ObjectImporter>().ImportModelAsync(entry, Path.GetFileNameWithoutExtension(filenames[0]), filepath, texNames, null, importOptions, shader);
         }
-        
+
         yield return null;
     }
 
@@ -715,10 +763,13 @@ public class echoAR : MonoBehaviour
     {
         // Check if started redering
         float time;
-        if (renderTimes.TryGetValue(renderIndex, out time)){
+        if (renderTimes.TryGetValue(renderIndex, out time))
+        {
             // Output render time
             Debug.Log("Render time of " + renderIndex + " is " + (Time.time - time));
-        } else {
+        }
+        else
+        {
             // Store render time start
             renderTimes.Add(renderIndex, Time.time);
         }
@@ -734,7 +785,7 @@ public class echoAR : MonoBehaviour
             WClient.Emit(WClient.EventType.KEY.ToString(), APIKey);
         });
         WClient.On(WClient.EventType.CONNECTION_LOST.ToString(), (string arg0) => {
-            
+
         });
         WClient.On(WClient.EventType.ADD_ENTRY.ToString(), (string message) => {
             // Parse new entry
@@ -829,31 +880,31 @@ public class echoAR : MonoBehaviour
         });
         yield return null;
     }
-	
-	public IEnumerator UploadModel(byte[] objFile, string objFileName, byte[] mtlFile, string mtlFileName)
+
+    public IEnumerator UploadModel(byte[] objFile, string objFileName, byte[] mtlFile, string mtlFileName)
     {
-        return UploadModel(objFile, objFileName, mtlFile, mtlFileName, (List<byte[]>) null, (List<string>) null);
+        return UploadModel(objFile, objFileName, mtlFile, mtlFileName, (List<byte[]>)null, (List<string>)null);
     }
 
     public IEnumerator UploadModel(byte[] objFile, string objFileName, byte[] mtlFile, string mtlFileName, byte[] pngFile, string pngFileName)
     {
-        return UploadModel(objFile, objFileName, mtlFile, mtlFileName, new List<byte[]> {pngFile}, new List<string> {pngFileName});
+        return UploadModel(objFile, objFileName, mtlFile, mtlFileName, new List<byte[]> { pngFile }, new List<string> { pngFileName });
     }
-    
+
     public IEnumerator UploadModel(byte[] objFile, string objFileName, byte[] mtlFile, string mtlFileName, List<byte[]> pngFiles, List<string> pngFileNames)
     {
         // Create form
         WWWForm form = new WWWForm();
         // Set form data
-        form.AddField("key",  APIKey);      // API Key
+        form.AddField("key", APIKey);      // API Key
         form.AddField("target_type", 2);    // Target type is SURFACE
         form.AddField("hologram_type", 2);  // Hologram type is MODEL
         // Set form files
         form.AddBinaryData("file_model", objFile, objFileName, null);   // .obj file
         form.AddBinaryData("file_model", mtlFile, mtlFileName, null);   // .mtl file
         if (pngFiles != null && pngFileNames != null)
-			for (int i = 0; i < pngFileNames.Count; i++)                    // Texture files
-            	form.AddBinaryData("file_model", pngFiles[i], pngFileNames[i], null);
+            for (int i = 0; i < pngFileNames.Count; i++)                    // Texture files
+                form.AddBinaryData("file_model", pngFiles[i], pngFileNames[i], null);
         // Send request
         UnityWebRequest www = UnityWebRequest.Post("https://console.echoAR.xyz/upload", form);
         yield return www.SendWebRequest();
@@ -890,4 +941,4 @@ public class echoAR : MonoBehaviour
             Debug.Log("Data update complete!");
         }
     }
-} 
+}
